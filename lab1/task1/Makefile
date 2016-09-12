@@ -1,4 +1,4 @@
-all: bin/main.o bin/algorithm.o bin/util.o bin/io.o	
+lab1: bin/main.o bin/algorithm.o bin/util.o bin/io.o	
 	gcc -o lab1 bin/io.o bin/util.o bin/algorithm.o bin/main.o
 
 bin/main.o: src/main.c
