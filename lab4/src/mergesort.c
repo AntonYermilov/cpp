@@ -4,7 +4,7 @@
 #include "stdlib.h"
 
 void mergesort(void* base, size_t len, size_t size, int (*cmp)(const void*, const void*)) {
-	if (len == 1)
+	if (len <= 1)
 		return;
 	size_t left = len >> 1, right = (len + 1) >> 1;
 	mergesort(base, left, size, cmp);

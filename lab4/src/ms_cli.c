@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 	void* array;
 
 	if (strcmp(argv[1], "int") == 0) {
-		array = malloc((argc - 1) * sizeof(int));
+		array = malloc((argc - 2) * sizeof(int));
 		for (int i = 2; i < argc; i++)
 			*(int*)(array + (i - 2) * sizeof(int)) = atoi(argv[i]);
 		mergesort(array, argc - 2, sizeof(int), int_cmp);
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (strcmp(argv[1], "char") == 0) {
-		array = malloc((argc - 1) * sizeof(char));
+		array = malloc((argc - 2) * sizeof(char));
 		for (int i = 2; i < argc; i++)
 			*(char*)(array + (i - 2) * sizeof(char)) = argv[i][0];
 		mergesort(array, argc - 2, sizeof(char), char_cmp);
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (strcmp(argv[1], "str") == 0) {
-		array = malloc((argc - 1) * sizeof(char*));
+		array = malloc((argc - 2) * sizeof(char*));
 		for (int i = 2; i < argc; i++)
 			*(char**)(array + (i - 2) * sizeof(char*)) = argv[i];
 		mergesort(array, argc - 2, sizeof(char*), str_cmp);
