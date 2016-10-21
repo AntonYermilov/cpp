@@ -60,7 +60,7 @@ void MyVector::insert(std::size_t index, int value) {
 	assert(0 <= index && index <= _sz);
 	push_back(0);
 	for (std::size_t i = _sz - 1; i > index; i--)
-		_data[i] =  _data[i - 1];
+		_data[i] = _data[i - 1];
 	_data[index] = value;
 }
 void MyVector::erase(std::size_t index) {
