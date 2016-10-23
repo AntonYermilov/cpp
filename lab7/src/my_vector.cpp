@@ -45,8 +45,12 @@ void MyVector::reserve(std::size_t new_capacity) {
 	_data = new_data;
 }
 void MyVector::resize(std::size_t new_size) {
-	if (new_size > _cp)
-		reserve(std::max(new_size, _cp * 2));
+	if (new_size > _cp) {
+		std::size_t new_capacity = _cp;
+		while (new_capacity < new_size)
+			new_capacity <<= 1;
+		reserve(new_capacity);
+	}
 	memset(_data + _sz, 0, sizeof(_data[0]) * (new_size - _sz));
 	_sz = new_size;
 }
