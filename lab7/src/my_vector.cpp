@@ -7,13 +7,13 @@
 MyVector::MyVector() {
 	_sz = 0;
 	_cp = 2;
-	_data = new int[_sz];
+	_data = new int[_cp];
 }
 MyVector::MyVector(std::size_t init_capacity) {
 	assert(init_capacity > 0);
 	_sz = 0;
 	_cp = init_capacity;
-	_data = new int[_sz];
+	_data = new int[_cp];
 }
 MyVector::~MyVector() {
 	delete []_data;
