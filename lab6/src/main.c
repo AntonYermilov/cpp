@@ -17,7 +17,7 @@ void phonebook_out(char* outfile, size_t MAX_SIZE) {
 	init_phonebook(&book);
 	size_t size = rand() % MAX_SIZE + 1;
 	gen_phonebook(&book, size);
-	save_phonebook_xml(outfile, &book);
+	assert(save_phonebook_xml(outfile, &book) == 0);
 	clear_phonebook(&book);
 }
 

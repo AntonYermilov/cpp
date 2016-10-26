@@ -58,6 +58,12 @@ void handle_data(void *data, const char *content, int length) {
 	}
 }
 
+int compare_humans(const void* ptr1, const void* ptr2) {
+	human_t h1 = *(human_t*)(ptr1);
+	human_t h2 = *(human_t*)(ptr2);
+	return strcmp(h1.family_name, h2.family_name);
+}
+
 int load_phonebook_xml(const char* filename, phonebook_t* book) {
 	
 	FILE* data_in = fopen(filename, "r");
@@ -87,10 +93,13 @@ int load_phonebook_xml(const char* filename, phonebook_t* book) {
 			return 2;
 		}
 	}
-
+	
 	XML_ParserFree(parser);
 	free(buff);
 	fclose(data_in);
+
+	qsort(book->humans, book->size, sizeof(human_t), compare_humans);
+
 	return 0;
 }
 
