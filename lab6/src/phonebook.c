@@ -138,10 +138,11 @@ void print_phonebook(phonebook_t* book) {
 human_t gen_human() {
 	human_t human;
 	
-	//strcpy(human.name, kNames[rand() % NAMES_CNT]);
-	//strcpy(human.middle_name, kMiddleNames[rand() % MIDDLE_NAMES_CNT]);
-	//strcpy(human.family_name, kFamilyNames[rand() % FAMILY_NAMES_CNT]);
+	strcpy(human.name, kNames[rand() % NAMES_CNT]);
+	strcpy(human.middle_name, kMiddleNames[rand() % MIDDLE_NAMES_CNT]);
+	strcpy(human.family_name, kFamilyNames[rand() % FAMILY_NAMES_CNT]);
 
+	/*
 	for (int i = 0; i < 255; i++) {
 		human.name[i] = (i == 0 ? 'A' : 'a') + rand() % 26;
 		human.middle_name[i] = (i == 0 ? 'A' : 'a') + rand() % 26;
@@ -150,12 +151,13 @@ human_t gen_human() {
 	human.name[255] = '\0';
 	human.middle_name[255] = '\0';
 	human.family_name[255] = '\0';
+	*/
 
-	//human.phones_num = rand() % 10 + 1;
-	human.phones_num = 10;
+	human.phones_num = rand() % 10 + 1;
+	//human.phones_num = 10;
 	for (size_t i = 0; i < human.phones_num; i++) {
-		//size_t len = rand() % 20 + 1;
-		size_t len = 20;
+		size_t len = rand() % 20 + 1;
+		//size_t len = 20;
 		for (size_t j = 0; j < len; j++)
 			human.phones[i][j] = '0' + rand() % 10;
 		human.phones[i][len] = '\0';
