@@ -182,10 +182,7 @@ void gen_phonebook(phonebook_t* book, size_t size) {
 void push_back_human(phonebook_t* book, human_t* human) {
 	if (book->size == book->capacity) {
 		size_t new_capacity = book->capacity * 2;
-		human_t* humans_copy = malloc(sizeof(human_t) * new_capacity);
-		memcpy(humans_copy, book->humans, sizeof(human_t) * book->size);
-		free(book->humans);
-		book->humans = humans_copy;
+		book->humans = realloc(book->humans, new_capacity * sizeof(human_t));
 		book->capacity = new_capacity;
 	}
 	book->humans[book->size++] = *human;
