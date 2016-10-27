@@ -4,6 +4,7 @@
 #include "string.h"
 #include "ctype.h"
 #include "expat.h"
+#include "stdbool.h"
 
 #include "phonebook.h"
 #include "names.h"
@@ -31,6 +32,8 @@ void clear_phonebook(phonebook_t* book) {
 	free(book->humans);
 }
 
+static bool NEW_PHONE = false;
+
 void start_element(void *data, const char *element, const char **attribute) {
 	//printf("start element: %s\n", element);
 	if (strcmp(element, "human") == 0) {
@@ -39,6 +42,8 @@ void start_element(void *data, const char *element, const char **attribute) {
 		init_human(&human, attribute[1]);
 		push_back_human(data, &human);
 	}
+	if (strcmp(element, "phone") == 0)
+		NEW_PHONE = true;
 }
 
 void end_element(void *data, const char* element) {
@@ -53,6 +58,7 @@ void handle_data(void *data, const char *content, int length) {
 
 		//printf("handle data: %s\n", phone);
 		add_phone(data, phone);
+		NEW_PHONE = false;
 
 		free(phone);
 	}
@@ -77,7 +83,7 @@ int load_phonebook_xml(const char* filename, phonebook_t* book) {
 	XML_SetCharacterDataHandler(parser, handle_data);
 	XML_SetUserData(parser, book);
 
-	size_t buff_size = 1048576;
+	size_t buff_size = 4096;
 	char* buff = malloc(buff_size);
 	
 	int isFinal = 0;
@@ -187,5 +193,8 @@ void push_back_human(phonebook_t* book, human_t* human) {
 
 void add_phone(phonebook_t* book, char* phone) {
 	human_t* human = &book->humans[book->size - 1];
-	strcpy(human->phones[human->phones_num++], phone);
+	if (NEW_PHONE)
+		strcpy(human->phones[human->phones_num++], phone);
+	else
+		strcat(human->phones[human->phones_num - 1], phone);
 }
