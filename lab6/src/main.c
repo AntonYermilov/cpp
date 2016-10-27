@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 	
 	assert(argc >= 3);
 	phonebook_in(argv[1]);
-	phonebook_out(argv[2], 50);
+	phonebook_out(argv[2], 500);
 
 	//phonebook_in("pbook.xml");
 	//phonebook_out("pbook_out.xml", 25);
