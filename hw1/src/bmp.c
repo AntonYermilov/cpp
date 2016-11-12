@@ -54,6 +54,7 @@ int crop(BMP* bmp, int x, int y, int w, int h) {
 	bmp->w = w_real;
 	bmp->h = h;
 	bmp->header.bfSize = w_real * h + bmp->header.bfOffBits;
+	bmp->image = realloc(bmp->image, w_real * h);
 
 	return 0;
 }

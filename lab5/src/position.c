@@ -20,7 +20,6 @@ void delete_position(struct intrusive_list * list, struct intrusive_node * node)
     free(get_position(node));
 }
 
-
 void remove_position(struct intrusive_list * list, int x, int y) {
     struct intrusive_node * head = &list->head;
     struct intrusive_node * node = head->next;
@@ -48,4 +47,3 @@ void remove_all(struct intrusive_list * list) {
     while (list->head.next != &list->head)
         delete_position(list, list->head.next);
 }
-
