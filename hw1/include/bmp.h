@@ -28,6 +28,9 @@ typedef struct {
 	int w, h;
 } BMP;
 
+BMP* bmp_create();
+void bmp_destroy(BMP* free);
+
 int bmp_load(const char* fname, BMP* bmp);
 int bmp_save(const char* fname, BMP* bmp);
 int crop(BMP* bmp, int x, int y, int w, int h);

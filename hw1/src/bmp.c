@@ -5,6 +5,16 @@
 #include "ctype.h"
 #include "bmp.h"
 
+BMP* bmp_create() {
+	BMP* bmp = malloc(sizeof(BMP));
+	return bmp;
+}
+
+void bmp_destroy(BMP* bmp) {
+	free(bmp->image);
+	free(bmp);
+}
+
 int bmp_load(const char* fname, BMP* bmp) {
 	FILE* fin = fopen(fname, "rb");
 	if (fin == NULL)
@@ -38,23 +48,26 @@ int bmp_save(const char* fname, BMP* bmp) {
 int crop(BMP* bmp, int x, int y, int w, int h) {
 	if (x < 0 || y < 0 || x + w > bmp->header.biWidth || y + h > bmp->header.biHeight)
 		return 2;
+	
+	BMP* bmp_copy = malloc(sizeof(BMP));
+	memcpy(bmp_copy, bmp, sizeof(BMPheader));
+
+	
+	bmp_copy->w = (w * 3 + 3) & (-4);
+	bmp_copy->h = h;
+	bmp_copy->header.bfSize = bmp_copy->w * bmp_copy->h + bmp_copy->header.bfOffBits;
+	bmp_copy->header.biWidth = w;
+	bmp_copy->header.biHeight = h;
+	bmp_copy->image = malloc(bmp_copy->w * bmp_copy->h);
+	memset(bmp_copy->image, 0, bmp_copy->w * bmp_copy->h);
 
 	int y_real = bmp->h - h - y;
-	int w_real = (w * 3 + 3) & (-4);
+	for (int i = y_real; i < y_real + h; i++)
+		memcpy(&bmp_copy->image[bmp_copy->w * (i - y_real)], &bmp->image[bmp->w * i + x * 3], w * 3);
 
-	for (int i = y_real; i < y_real + h; i++) {
-		memcpy(&bmp->image[w_real * (i - y_real)], &bmp->image[bmp->w * i + x * 3], w * 3);
-		int j = w * 3;
-		while (j & 3)
-			bmp->image[w_real * (i - y_real) + j++] = 0;
-	}
-
-	bmp->header.biWidth = w;
-	bmp->header.biHeight = h;
-	bmp->w = w_real;
-	bmp->h = h;
-	bmp->header.bfSize = w_real * h + bmp->header.bfOffBits;
-	bmp->image = realloc(bmp->image, w_real * h);
+	free(bmp->image);
+	memcpy(bmp, bmp_copy, sizeof(BMP));
+	free(bmp_copy);
 
 	return 0;
 }
@@ -65,25 +78,21 @@ void rotate(BMP* bmp) {
 	BMP* bmp_copy = malloc(sizeof(BMP));
 	memcpy(bmp_copy, bmp, sizeof(BMPheader));
 
-	bmp_copy->header.biWidth = h;
-	bmp_copy->header.biHeight = w;
 	bmp_copy->w = (h * 3 + 3) & (-4);
 	bmp_copy->h = w;
+	bmp_copy->header.bfSize = bmp_copy->w * bmp_copy->h + bmp_copy->header.bfOffBits;
+	bmp_copy->header.biWidth = h;
+	bmp_copy->header.biHeight = w;
 	bmp_copy->image = malloc(bmp_copy->w * bmp_copy->h);
-	
+	memset(bmp_copy->image, 0, bmp_copy->w * bmp_copy->h);
+
 	for (int y = 0; y < h; y++)
 		for (int x = 0; x < w; x++)
 			memcpy(&bmp_copy->image[bmp_copy->w * (w - x - 1) + 3 * y], &bmp->image[bmp->w * y + 3 * x], 3);
-	for (int y = 0; y < w; y++) {
-		int x = h * 3;
-		while (x & 3)
-			bmp_copy->image[bmp_copy->w * y + x++] = 0;
-	}
 	
 	free(bmp->image);
 	memcpy(bmp, bmp_copy, sizeof(BMP));
 	free(bmp_copy);
-	bmp->header.bfSize = bmp->w * bmp->h + bmp->header.bfOffBits;
 }
 
 int insert_msg(const char* key_txt, const char* msg_txt, BMP* bmp) {

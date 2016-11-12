@@ -5,7 +5,7 @@
 #include "bmp.h"
 
 int crop_rotate(const char* fin, const char* fout, int x, int y, int w, int h) {
-	BMP* bmp = malloc(sizeof(BMP));
+	BMP* bmp = bmp_create();
 	int err;
 
 	err = bmp_load(fin, bmp);
@@ -22,13 +22,13 @@ int crop_rotate(const char* fin, const char* fout, int x, int y, int w, int h) {
 	if (err)
 		return err;
 	
-	free(bmp->image);
-	free(bmp);
+	bmp_destroy(bmp);
+
 	return 0;
 }
 
 int insert(const char* fin, const char* fout, const char* key_txt, const char* msg_txt) {
-	BMP* bmp = malloc(sizeof(BMP));
+	BMP* bmp = bmp_create();
 	int err;
 	
 	err = bmp_load(fin, bmp);
@@ -43,13 +43,13 @@ int insert(const char* fin, const char* fout, const char* key_txt, const char* m
 	if (err)
 		return err;
 
-	free(bmp->image);
-	free(bmp);
+	bmp_destroy(bmp);
+
 	return 0;
 }
 
 int extract(const char* fin, const char* key_txt, const char* msg_txt) {
-	BMP* bmp = malloc(sizeof(BMP));
+	BMP* bmp = bmp_create();
 	int err;
 	
 	err = bmp_load(fin, bmp);
@@ -60,8 +60,8 @@ int extract(const char* fin, const char* key_txt, const char* msg_txt) {
 	if (err)
 		return err;
 	
-	free(bmp->image);
-	free(bmp);
+	bmp_destroy(bmp);
+
 	return 0;
 }
 
