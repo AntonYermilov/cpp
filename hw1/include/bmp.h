@@ -3,6 +3,8 @@
 
 #include "stdint.h"
 
+#define HEADER_SIZE 54
+
 typedef struct {
 	uint16_t bfType;
 	int bfSize;
