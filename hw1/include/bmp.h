@@ -5,6 +5,7 @@
 
 #define HEADER_SIZE 54
 
+#pragma pack(push, 1)
 typedef struct {
 	uint16_t bfType;
 	int bfSize;
@@ -23,12 +24,15 @@ typedef struct {
 	int biClrUsed;
 	int biClrImportant;
 } BMPheader;
+#pragma pack(pop)
 
+#pragma pack(push, 1)
 typedef struct {
 	BMPheader header;
 	unsigned char* image;
 	int w, h;
 } BMP;
+#pragma pack(pop)
 
 BMP* bmp_create();
 void bmp_destroy(BMP* free);
