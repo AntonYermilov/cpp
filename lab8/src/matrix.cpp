@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cstring>
+#include <algorithm>
 
 #include "matrix.h"
 
@@ -27,15 +28,11 @@ Matrix& Matrix::operator=(const Matrix &m) {
 	if (this == &m)
 		return *this;
 
-	this->~Matrix();
+	Matrix t(m);
+	std::swap(this->_data, t._data);
+	std::swap(this->_rows, t._rows);
+	std::swap(this->_cols, t._cols);
 
-	_rows = m._rows;
-	_cols = m._cols;
-	_data = new int*[_rows];
-	for (std::size_t i = 0; i < _rows; i++) {
-		_data[i] = new int[_cols];
-		memcpy(_data[i], m._data[i], _cols * sizeof(int));
-	}
 	return *this;
 }
 

@@ -16,4 +16,4 @@ bin/%.o: src/%.cpp include/*.h bin
 
 clean:
 	rm -rf bin main
-	rm */*~
+	rm -f */*~
