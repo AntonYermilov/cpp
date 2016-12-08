@@ -16,4 +16,8 @@ protected:
     int _id;
     int _x;
     int _y;
+
+private:
+    Figure(const Figure &fg);
+    Figure& operator=(const Figure &fg);
 };
