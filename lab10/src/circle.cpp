@@ -1,9 +1,17 @@
 #include "circle.h"
 #include <cstdio>
+#include <cstring>
 
 Circle::Circle(int id, int x, int y, int radius, const char* label) : Figure(id, x, y) {
     _radius = radius;
-    _label = label;
+
+    int len = strlen(label);
+    _label = new char[len + 1];
+    strcpy(_label, label);
+}
+
+Circle::~Circle() {
+    delete []_label;
 }
 
 void Circle::print() const {
