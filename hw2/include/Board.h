@@ -3,7 +3,6 @@
 class Board {
 public:    
     Board();
-    ~Board();
 
     enum game_status {
         CONTINUE,
@@ -29,7 +28,7 @@ private:
 
     bool inARow(int row, int col, int dr, int dc) const;
 
-    int _r;
-    int _c;
-    char** _field;
+    static const int _r = 10;
+    static const int _c = 10;
+    char _field[_r][_c];
 };

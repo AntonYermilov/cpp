@@ -3,19 +3,8 @@
 #include <algorithm>
 
 Board::Board() {
-    _r = 10;
-    _c = 10;
-    _field = new char*[10];
-    for (int i = 0; i < 10; i++) {
-        _field[i] = new char[10];
-        memset(_field[i], '.', 10);
-    }
-}
-
-Board::~Board() {
-    for (int i = 0; i < 10; i++)
-        delete []_field[i];
-    delete []_field;
+    for (int i = 0; i < _r; i++)
+        memset(_field[i], '.', _c);
 }
 
 void Board::move(int row, int col, char sign) {
@@ -23,25 +12,25 @@ void Board::move(int row, int col, char sign) {
 }
 
 bool Board::canMove(int row, int col) const {
-    if (row < 0 || row > 9 || col < 0 || col > 9)
+    if (row < 0 || row >= _r || col < 0 || col >= _c)
         return false;
     return _field[row][col] == '.';
 }
 
 Board::game_status Board::isWin() const {
     bool exists_move = false;
-    for (int row = 0; row < 10; row++)
-        for (int col = 0; col < 10; col++)
+    for (int row = 0; row < _r; row++)
+        for (int col = 0; col < _c; col++)
             exists_move |= _field[row][col] == '.';
     if (!exists_move)
         return DRAW;
 
-    for (int row = 0; row < 10; row++) {
-        for (int col = 0; col < 10; col++) {
-            if ((row + 5 <= 10 && inARow(row, col, 1, 0)) ||                    //five in row
-                (col + 5 <= 10 && inARow(row, col, 0, 1)) ||                    //five in column
-                (std::max(row, col) + 5 <= 10 && inARow(row, col, 1, 1)) ||     //five in main diagonal
-                (std::max(row, col) + 5 <= 10 && inARow(row + 4, col, -1, 1)))  //five in secondary diagonal
+    for (int row = 0; row < _r; row++) {
+        for (int col = 0; col < _c; col++) {
+            if ((row + 5 <= _r && inARow(row, col, 1, 0)) ||                      //five in row
+                (col + 5 <= _c && inARow(row, col, 0, 1)) ||                      //five in column
+                (row + 5 <= _r && col + 5 <= _c && inARow(row, col, 1, 1)) ||     //five in main diagonal
+                (row - 4 >=  0 && col + 5 <= _c && inARow(row, col, -1, 1)))  //five in secondary diagonal
                     return _field[row][col] == 'O' ? FIRST : SECOND;
         }
     }
