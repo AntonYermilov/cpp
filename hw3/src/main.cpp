@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <string>
 
@@ -7,6 +8,9 @@
 using std::cout;
 using std::cerr;
 using std::string;
+using std::ifstream;
+using std::ofstream;
+using std::exception;
 
 bool parseArguments(int pos, char** argv, int& type_id, int& fin_id, int& fout_id) {
     if (pos > 6)
@@ -49,6 +53,22 @@ void typeParseError() {
     exit(1);
 }
 
+void checkFiles(ifstream& fin, ofstream& fout) {
+    if (fin.good() && fout.good())
+        return;
+    if (!fin.good()) {
+        cerr << "Error when opening input file occurred\n";
+    } else {
+        fin.close();
+    }
+    if (!fout.good()) {
+        cerr << "Error when opening output file occurred\n";
+    } else {
+        fout.close();
+    }
+    exit(2);
+}
+
 int main(int argc, char** argv) {
     if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0))
         typeHelp();
@@ -61,17 +81,34 @@ int main(int argc, char** argv) {
         typeParseError();
 
     string type = string(argv[type_id]);
-    string fin = string(argv[fin_id]);
-    string fout = string(argv[fout_id]);
-
+    string in = string(argv[fin_id]);
+    string out = string(argv[fout_id]);
     
+    ifstream fin;
+    ofstream fout;
+
     Archiver archive;
-    if (type == "-c") {
-        archive.createArchive(fin, fout);
-    } else {
-        archive.unpackArchive(fin, fout);
+
+    try {
+        if (type == "-c") {
+            fin = ifstream(in, ifstream::in);
+            fout = ofstream(out, ofstream::binary);
+            checkFiles(fin, fout);
+            archive.createArchive(fin, fout);
+        } else {
+            fin = ifstream(in, ifstream::binary);
+            fout = ofstream(out, ofstream::out);
+            checkFiles(fin, fout);
+            archive.unpackArchive(fin, fout);
+        }
+        fin.close();
+        fout.close();
+    } catch(exception& e) {
+        cerr << e.what() << '\n';
+        fin.close();
+        fout.close();
+        return 1;
     }
     
-
     return 0;
 }

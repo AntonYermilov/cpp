@@ -1,15 +1,26 @@
+#include <iostream>
 #include <fstream>
 #include <cstddef>
 #include <set>
 
 #include "huffman.h"
 
-void Archiver::createArchive(const std::string& in, const std::string& out) const {
-    std::ifstream fin(in, std::ifstream::in);
-    std::ofstream fout(out, std::ofstream::binary);
+const char* DecodingException::what() const throw() {
+    return "Error when unpacking archive occurred";
+}
 
+Archiver::Archiver() : 
+        _before_size(0), _after_size(0), _table_size(0) {
+}
+
+void Archiver::printStatistics() const {
+    std::cout << _before_size << '\n' << _after_size << '\n' << _table_size << '\n';
+    std::cout.flush();
+}
+
+void Archiver::createArchive(std::ifstream& fin, std::ofstream& fout) {
     fin.seekg(0, fin.end);
-    int length = fin.tellg();
+    int length = _before_size = fin.tellg();
     fin.seekg(0, fin.beg);
 
     std::map<char, int> frequency;
@@ -22,7 +33,8 @@ void Archiver::createArchive(const std::string& in, const std::string& out) cons
 
     putTable(fout, frequency);
     fout.write((char*) &length, 4);
-    
+    _table_size += 4;
+
     fin.seekg(0, fin.beg);
     for (int i = 0; i < length; i++) {
         char symbol;
@@ -31,14 +43,10 @@ void Archiver::createArchive(const std::string& in, const std::string& out) cons
     }
     putBit(fout, 0, true);
 
-    fin.close();
-    fout.close();
+    printStatistics();
 }
 
-void Archiver::unpackArchive(const std::string& in, const std::string& out) const {
-    std::ifstream fin(in, std::ifstream::binary);
-    std::ofstream fout(out, std::ofstream::out);
-
+void Archiver::unpackArchive(std::ifstream& fin, std::ofstream& fout) {
     std::map<char, int> frequency;
     readTable(fin, frequency);
     BinaryTrie trie(frequency);
@@ -46,42 +54,51 @@ void Archiver::unpackArchive(const std::string& in, const std::string& out) cons
 
     int length;
     fin.read((char*) &length, 4);
-    
+    _table_size += 4;
+
     char byte;
     while (length) {
+        if (!fin.good())
+            throw DecodingException();
+        _before_size++;
         fin.read(&byte, 1);
         for (int i = 0; i < 8 && length; i++) {
             int bit = (byte & (1 << i)) > 0;
+            if (!node->canMoveDown(bit) && !node->isLeaf())
+                throw DecodingException();
             if (!node->canMoveDown(bit))
                 node = trie.getRoot();
             node = node->moveDown(bit);
             if (node->isLeaf()) {
                 fout.put(node->getValue());
+                _after_size++;
                 length--;
             }
         }
     }
-    
-    fin.close();
-    fout.close();
+
+    printStatistics();
 }
 
-void Archiver::putTable(std::ofstream& fout, const std::map<char, int>& frequency) const {
+void Archiver::putTable(std::ofstream& fout, const std::map<char, int>& frequency) {
     int size = frequency.size();
     fout.write((char*) &size, 4);
     for (auto& symbol : frequency) {
         fout.write(&symbol.first, 1);
         fout.write((char*) &symbol.second, 4);
     }
+    _table_size += size * 5 + 4;
 }
 
-void Archiver::putBit(std::ofstream& fout, int bit, bool flush) const {
+void Archiver::putBit(std::ofstream& fout, int bit, bool flush) {
     static char buff = 0;
     static int cur_pos = 0;
 
     if (flush) {
-        if (cur_pos)
+        if (cur_pos) {
             fout.write(&buff, 1);
+            _after_size++;
+        }
         return;
     }
 
@@ -89,18 +106,19 @@ void Archiver::putBit(std::ofstream& fout, int bit, bool flush) const {
     cur_pos = (cur_pos + 1) & 7;
     if (!cur_pos) {
         fout.write(&buff, 1);
+        _after_size++;
         buff = 0;
     }
 }
 
-void Archiver::putCode(std::ofstream& fout, BinaryTrie::Node* node) const {
+void Archiver::putCode(std::ofstream& fout, BinaryTrie::Node* node) {
     if (!node->canMoveUp())
         return;
     putCode(fout, node->moveUp());
     putBit(fout, node->moveUp()->moveDown(0) == node ? 0 : 1, false);
 }
 
-void Archiver::readTable(std::ifstream& fin, std::map<char, int>& frequency) const {
+void Archiver::readTable(std::ifstream& fin, std::map<char, int>& frequency) {
     int size;
     fin.read((char*) &size, 4);
     for (int i = 0; i < size; i++) {
@@ -110,6 +128,7 @@ void Archiver::readTable(std::ifstream& fin, std::map<char, int>& frequency) con
         fin.read((char*) &count, 4);
         frequency[symbol] = count;
     }
+    _table_size = size * 5 + 4;
 }
 
 Archiver::BinaryTrie::BinaryTrie() {

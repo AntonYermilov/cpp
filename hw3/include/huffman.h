@@ -2,13 +2,23 @@
 #define __HUFFMAN_H
 
 #include <fstream>
+#include <exception>
 #include <string>
 #include <map>
 
+class DecodingException : public std::exception {
+public:
+    const char* what() const throw();
+};
+
 class Archiver {
   public:
-    void createArchive(const std::string& in, const std::string& out) const;
-    void unpackArchive(const std::string& in, const std::string& out) const;
+    Archiver();
+
+    void printStatistics() const;
+
+    void createArchive(std::ifstream& fin, std::ofstream& fout);
+    void unpackArchive(std::ifstream& fin, std::ofstream& fout);
 
   private:
     class BinaryTrie {
@@ -57,11 +67,15 @@ class Archiver {
         std::map<char, Node*> _pos;
     };
 
-    void putTable(std::ofstream& fout, const std::map<char, int>& frequency) const;
-    void putBit(std::ofstream& fout, int bit, bool flush) const;
-    void putCode(std::ofstream& fout, BinaryTrie::Node* node) const;
+    void putTable(std::ofstream& fout, const std::map<char, int>& frequency);
+    void putBit(std::ofstream& fout, int bit, bool flush);
+    void putCode(std::ofstream& fout, BinaryTrie::Node* node);
     
-    void readTable(std::ifstream& fin, std::map<char, int>& frequency) const;
+    void readTable(std::ifstream& fin, std::map<char, int>& frequency);
+
+    int _before_size;
+    int _after_size;
+    int _table_size;
 };
 
 #endif
