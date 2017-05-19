@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     string type = string(argv[type_id]);
     string in = string(argv[fin_id]);
     string out = string(argv[fout_id]);
-    
+
     ifstream fin;
     ofstream fout;
 
@@ -109,6 +109,6 @@ int main(int argc, char** argv) {
         fout.close();
         return 1;
     }
-    
+
     return 0;
 }
