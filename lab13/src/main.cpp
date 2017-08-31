@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstddef>
-#include <cstring>
 #include "my_array.h"
 
 using std::cout;
@@ -68,30 +67,21 @@ void test_bool() {
     for (size_t i = 0; i < N / 2; i++)
         a[i] = a[i + N / 2];
     cout << a << '\n';
- 
     
     a[0] = (a[0] ? 0 : 1);
     const my_array<bool, N> &ca = a;
     for (size_t i = 0; i < N / 2; i++)
         a[i + N / 2] = ca[i];
     cout << a << '\n';
-    
+
 }
 
 class NonCopyable {
-  public:
+public:
     NonCopyable() {}
-  private:
+private:
     NonCopyable(const NonCopyable&);
     NonCopyable& operator=(const NonCopyable);
-};
-
-class MyClass {
-  public:
-    MyClass(const char* str = "Hello world!") :
-            str(str) {
-    }
-    const char* str;
 };
 
 int main() {
@@ -103,14 +93,4 @@ int main() {
     test_assign<bool, 10>();
 
     test_bool<32>();
-
-    my_array<MyClass, 10> a;
-    my_array<MyClass, 10> b;
-    b.fill(MyClass("Hi!"));
-
-    cout << a[0].str << '\n' << b[0].str << '\n';
-    a = b;
-    cout << a[0].str << '\n';
-
-    return 0;
 }

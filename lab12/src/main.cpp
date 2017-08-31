@@ -5,7 +5,7 @@
 #include <iomanip>
 
 #include "my_vector.h"
-#include "test_my_vector.h"
+#include "test_my_vector_methods.h"
 
 class Product {
 public:

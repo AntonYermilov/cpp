@@ -127,7 +127,7 @@ int insert_msg(const char* key_txt, const char* msg_txt, BMP* bmp) {
 		if (fread(&symb, 1, 1, msg) != 1)
 			break;
 		if (isalpha(symb))
-			symb -= 'a';
+			symb -= 'A';
 		if (symb == ' ')
 			symb = 26;
 		if (symb == '.')
@@ -150,7 +150,7 @@ int insert_msg(const char* key_txt, const char* msg_txt, BMP* bmp) {
 			if (color == 'R')
 				color = 2;
 
-			int pos = bmp->w * y + x * 3 + color;
+			int pos = bmp->w * (bmp->h - y - 1) + x * 3 + color;
 			bmp->image[pos] = (bmp->image[pos] & (-2)) | ((symb & (1 << bit)) != 0);
 		}
 	}
@@ -185,13 +185,13 @@ int extract_msg(const char* key_txt, const char* msg_txt, BMP* bmp) {
 		if (color == 'R')
 			color = 2;
 
-		int pos = bmp->w * y + x * 3 + color;
+		int pos = bmp->w * (bmp->h - y - 1) + x * 3 + color;
 		int bit = bmp->image[pos] & 1;
 		symb |= bit << (i % 5);
 
 		if (i % 5 == 4) {
 			if (symb < 26)
-				symb += 'a';
+				symb += 'A';
 			if (symb == 26)
 				symb = ' ';
 			if (symb == 27)

@@ -109,3 +109,4 @@ class my_array<bool, N> {
 };
 
 #endif
+

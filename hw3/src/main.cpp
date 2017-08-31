@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstring>
 #include <string>
+#include <ctime>
 
 #include "huffman.h"
 
@@ -70,6 +71,8 @@ void checkFiles(ifstream& fin, ofstream& fout) {
 }
 
 int main(int argc, char** argv) {
+    std::ios::sync_with_stdio(false);
+
     if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0))
         typeHelp();
     if (argc != 6)
@@ -83,7 +86,7 @@ int main(int argc, char** argv) {
     string type = string(argv[type_id]);
     string in = string(argv[fin_id]);
     string out = string(argv[fout_id]);
-
+    
     ifstream fin;
     ofstream fout;
 
@@ -109,6 +112,10 @@ int main(int argc, char** argv) {
         fout.close();
         return 1;
     }
+ 
+#ifdef LOCAL
+    cerr << 1.0 * clock() / CLOCKS_PER_SEC << '\n';
+#endif
 
     return 0;
 }

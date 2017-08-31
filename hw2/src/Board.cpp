@@ -18,13 +18,6 @@ bool Board::canMove(int row, int col) const {
 }
 
 Board::game_status Board::isWin() const {
-    bool exists_move = false;
-    for (int row = 0; row < _r; row++)
-        for (int col = 0; col < _c; col++)
-            exists_move |= _field[row][col] == '.';
-    if (!exists_move)
-        return DRAW;
-
     for (int row = 0; row < _r; row++) {
         for (int col = 0; col < _c; col++) {
             if ((row + 5 <= _r && inARow(row, col, 1, 0)) ||                      //five in row
@@ -34,6 +27,13 @@ Board::game_status Board::isWin() const {
                     return _field[row][col] == 'O' ? FIRST : SECOND;
         }
     }
+
+    bool exists_move = false;
+    for (int row = 0; row < _r; row++)
+        for (int col = 0; col < _c; col++)
+            exists_move |= _field[row][col] == '.';
+    if (!exists_move)
+        return DRAW;
 
     return CONTINUE;
 }

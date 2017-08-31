@@ -1,7 +1,7 @@
 CXX = g++
-CXXFLAGS = -O3 -pedantic -Wall -Wextra -Werror -Iinclude -std=c++11 -DLOCAL
+CXXFLAGS = -O3 -pedantic -Wall -Wextra -Iinclude -std=c++14 -D_GLIBCXX_DEBUG #-fsanitize=undefined
 OBJECTS = $(patsubst src/%.cpp, bin/%.o, $(wildcard src/*.cpp))
-EXE = huffman
+EXE = main
 
 all: $(EXE)
 
